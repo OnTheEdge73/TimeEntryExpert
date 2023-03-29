@@ -1,0 +1,584 @@
+//+------------------------------------------------------------------+
+//|                                                  TimeEntryExpert |
+//|                                                          EA code |
+//|                                                       version 4.0|
+//|                                                        Your Name |
+//+------------------------------------------------------------------+
+
+#property copyright "Copyright 2023, Your Name"
+#property link      "https://www.example.com"
+#property version   "4.00"
+#property strict
+
+#include <Trade/Trade.mqh>
+#include <Tools/DateTime.mqh>
+#include <Expert/Expert.mqh>
+#include <Trade/SymbolInfo.mqh>
+#include <Trade/OrderInfo.mqh>
+#include <Trade/HistoryOrderInfo.mqh>
+#include <Trade/PositionInfo.mqh>
+#include <Trade/DealInfo.mqh>
+#include <Trade/TerminalInfo.mqh>
+#include <Object.mqh>
+
+CTrade trade;
+CTerminalInfo termInfo;
+
+//+------------------------------------------------------------------+
+//| Input parameters                                                |
+//+------------------------------------------------------------------+
+
+// Separator for trade time 1 inputs
+input string UseTime1 = "==== UseTime1 ====";
+// Enable/disable trade time 1
+input bool UseTradeTime1 = true;
+// Hour to open trades for trade time 1
+input int TradeHour1 = 0;
+// Minute to open trades for trade time 1
+input int TradeMinute1 = 0;
+// Hour to close trades for trade time 1
+input int TradeCloseHour1 = 0;
+// Minute to close trades for trade time 1
+input int TradeCloseMinute1 = 0;
+// Take profit for trade time 1
+input double TradeTakeProfit1 = 0;
+// Stop loss for trade time 1
+input double TradeStopLoss1 = 0;
+// Fixed lot size for trade time 1
+input double TradeLots1 = 0.01;
+// Percentage of account balance for trade time 1
+input int TradePercentAccount1 = 1;
+// Percentage of fixed amount for trade time 1
+input double TradePercentAmount1 = 1000.0;
+
+// Separator for trade time 2 inputs
+input string UseTime2 = "==== UseTime2 ====";
+// Enable/disable trade time 2
+input bool UseTradeTime2 = true;
+// Hour to open trades for trade time 2
+input int TradeHour2 = 0;
+// Minute to open trades for trade time 2
+input int TradeMinute2 = 0;
+// Hour to close trades for trade time 2
+input int TradeCloseHour2 = 0;
+// Minute to close trades for trade time 2
+input int TradeCloseMinute2 = 0;
+// Take profit for trade time 2
+input double TradeTakeProfit2 = 0;
+// Stop loss for trade time 2
+input double TradeStopLoss2 = 0;
+// Fixed lot size for trade time 2
+input double TradeLots2 = 0.01;
+// Percentage of account balance for trade time 2
+input int TradePercentAccount2 = 1;
+// Percentage of fixed amount for trade time 2
+input double TradePercentAmount2 = 1000.0;
+
+// Separator for trade time 3 inputs
+input string UseTime3 = "==== UseTime3 ====";
+// Enable/disable trade time 3
+input bool UseTradeTime3 = true;
+// Hour to open trades for trade time 3
+input int TradeHour3 = 0;
+// Minute to open trades for trade time 3
+input int TradeMinute3 = 0;
+// Hour to close trades for trade time 3
+input int TradeCloseHour3 = 0;
+// Minute to close trades for trade time 3
+input int TradeCloseMinute3 = 0;
+// Take profit for trade time 3
+input double TradeTakeProfit3 = 0;
+// Stop loss for trade time 3
+input double TradeStopLoss3 = 0;
+// Fixed lot size for trade time 3
+input double TradeLots3 = 0.01;
+// Percentage of account balance for trade time 3
+input int TradePercentAccount3 = 4;
+// Percentage of fixed amount for trade time 3
+input double TradePercentAmount3 = 1000.0;
+
+// Separator for trade time 4 inputs
+input string UseTime4 = "==== UseTime4 ====";
+// Enable/disable trade time 4
+input bool UseTradeTime4 = true;
+// Hour to open trades for trade time 4
+input int TradeHour4 = 0;
+// Minute to open trades for trade time 4
+input int TradeMinute4 = 0;
+// Hour to close trades for trade time 4
+input int TradeCloseHour4 = 0;
+// Minute to close trades for trade time 4
+input int TradeCloseMinute4 = 0;
+// Take profit for trade time 4
+input double TradeTakeProfit4 = 0;
+// Stop loss for trade time 4
+input double TradeStopLoss4 = 0;
+// Fixed lot size for trade time 4
+input double TradeLots4 = 0.04;
+// Percentage of account balance for trade time 4
+input int TradePercentAccount4 = 1;
+// Percentage of fixed amount for trade time 4
+input double TradePercentAmount4 = 1000.0;
+
+// Separator for trade time 5 inputs
+input string UseTime5 = "==== UseTime5 ====";
+// Enable/disable trade time 5
+input bool UseTradeTime5 = true;
+// Hour to open trades for trade time 5
+input int TradeHour5 = 0;
+// Minute to open trades for trade time 5
+input int TradeMinute5 = 0;
+// Hour to close trades for trade time 5
+input int TradeCloseHour5 = 0;
+// Minute to close trades for trade time 5
+input int TradeCloseMinute5 = 0;
+// Take profit for trade time 5
+input double TradeTakeProfit5 = 0;
+// Stop loss for trade time 5
+input double TradeStopLoss5 = 0;
+// Fixed lot size for trade time 5
+input double TradeLots5 = 0.01;
+// Percentage of account balance for trade time 5
+input int TradePercentAccount5 = 1;
+// Percentage of fixed amount for trade time 5
+input double TradePercentAmount5 = 1000.0;
+
+// Separator for trade time 6 inputs
+input string UseTime6 = "==== UseTime6 ====";
+// Enable/disable trade time 6
+input bool UseTradeTime6 = true;
+// Hour to open trades for trade time 6
+input int TradeHour6 = 0;
+// Minute to open trades for trade time 6
+input int TradeMinute6 = 0;
+// Hour to close trades for trade time 6
+input int TradeCloseHour6 = 0;
+// Minute to close trades for trade time 6
+input int TradeCloseMinute6 = 0;
+// Take profit for trade time 6
+input double TradeTakeProfit6 = 0;
+// Stop loss for trade time 6
+input double TradeStopLoss6 = 0;
+// Fixed lot size for trade time 6
+input double TradeLots6 = 0.01;
+// Percentage of account balance for trade time 6
+input int TradePercentAccount6 = 1;
+// Percentage of fixed amount for trade time 6
+input double TradePercentAmount6 = 1000.0;
+
+//+------------------------------------------------------------------+
+//| General Settings                                              |
+//+------------------------------------------------------------------+
+// Trade Days
+input string UseTradeDays = "==== Trade Days ====";
+input bool TradeMonday = true;
+input bool TradeTuesday = true;
+input bool TradeWednesday = true;
+input bool TradeThursday = true;
+input bool TradeFriday = true;
+input bool TradeSaturday = false;
+input bool TradeSunday = false;
+
+// General Settings
+input string UseGeneralSettings = "==== General Settings ====";
+input int MaxTrades = 5;
+input int MagicNumber = 1234;
+input string Comment = "TimeEntryExpert";
+
+//+------------------------------------------------------------------+
+//| Constants                                                        |
+//+------------------------------------------------------------------+
+#define MAGIC_NUMBER 123456789
+
+//+------------------------------------------------------------------+
+//| Global variables                                                 |
+//+------------------------------------------------------------------+
+
+datetime LastTradeOpenTime;  // Time of last trade opened
+int TotalTrades;             // Total number of trades opened
+int WinTrades;               // Total number of winning trades
+int LoseTrades;              // Total number of losing trades
+double TotalProfit;          // Total profit or loss from all trades
+int ExpertMagicNumber;       //set up expert magic number 
+
+//+------------------------------------------------------------------+
+//| Global functions                                                 |
+//+------------------------------------------------------------------+
+
+// Returns true if the current day is a trade day, false otherwise
+bool IsTradeDay()
+{
+    // Implement the logic here to determine if the current day is a trade day
+}
+
+// Opens a new trade with the specified parameters
+void OpenTrade(int hour, int minute, int closeHour, int closeMinute, double lots, double tp, double sl, int percentAccount, double percentAmount, int magicNumber, string comment)
+{
+    // Implement the logic here to open a new trade with the specified parameters
+}
+
+// Closes the specified trade with the specified parameters
+void CloseTrade(int ticket, double lots, double tp, double sl, int magicNumber, string comment)
+{
+    // Implement the logic here to close the specified trade with the specified parameters
+}
+
+// Calculates the profit or loss from the specified trade
+double CalculateProfit(int ticket)
+{
+    // Implement the logic here to calculate the profit or loss from the specified trade
+}
+
+
+//+------------------------------------------------------------------+
+//| CreateTradeTime / Preceding OnInit |
+//+------------------------------------------------------------------+
+void CreateTradeTime(int tradeTimeIndex, int tradeHour, int tradeMinute, int closeHour, int closeMinute, double takeProfit, double stopLoss, double lots, int percentAccount, double percentAmount)
+{
+tradeTimes[tradeTimeIndex].enabled = true;
+tradeTimes[tradeTimeIndex].tradeHour = tradeHour;
+tradeTimes[tradeTimeIndex].tradeMinute = tradeMinute;
+tradeTimes[tradeTimeIndex].closeHour = closeHour;
+tradeTimes[tradeTimeIndex].closeMinute = closeMinute;
+tradeTimes[tradeTimeIndex].takeProfit = takeProfit;
+tradeTimes[tradeTimeIndex].stopLoss = stopLoss;
+tradeTimes[tradeTimeIndex].lots = lots;
+tradeTimes[tradeTimeIndex].percentAccount = percentAccount;
+tradeTimes[tradeTimeIndex].percentAmount = percentAmount;
+}
+
+
+
+
+
+//+------------------------------------------------------------------+
+//| ResetTradingStatistics / Preceding OnInit                         |
+//+------------------------------------------------------------------+
+void ResetTradingStatistics()
+{
+    // Reset trading statistics
+    Trades = 0;
+    Wins = 0;
+    Losses = 0;
+    TotalProfit = 0.0;
+    TotalLoss = 0.0;
+    AverageProfit = 0.0;
+    AverageLoss = 0.0;
+    WinPercentage = 0.0;
+    LossPercentage = 0.0;
+    AverageTrade = 0.0;
+    MaxDrawdown = 0.0;
+    MaxDrawdownPercent = 0.0;
+    MaxConsecutiveWins = 0;
+    MaxConsecutiveLosses = 0;
+}
+
+
+//+------------------------------------------------------------------+
+//| Expert initialization function                                   |
+//+------------------------------------------------------------------+
+int OnInit()
+{
+
+//+------------------------------------------------------------------+
+//| CheckSuitableChart / Preceding OnInit                            |
+//+------------------------------------------------------------------+
+bool CheckSuitableChart()
+{
+    // Get the current symbol and chart period
+    string currentSymbol = Symbol();
+    ENUM_TIMEFRAMES currentPeriod = Period();
+    
+    // Check if the symbol and period match the expert inputs
+    if (currentSymbol != SymbolName || currentPeriod != ChartPeriod)
+    {
+        Print("The expert cannot be executed on this chart.");
+        return false;
+    }
+    
+    return true;
+}
+   }
+
+//+------------------------------------------------------------------+
+//| SetTradeSchedule                                                 |
+//+------------------------------------------------------------------+
+SetTradeSchedule();
+void SetTradeSchedule()
+{
+    // Set the trade schedule for each trade time
+    if(UseTradeTime1) tradeSchedule[0] = CreateTradeTime(TradeHour1, TradeMinute1, TradeCloseHour1, TradeCloseMinute1);
+    if(UseTradeTime2) tradeSchedule[1] = CreateTradeTime(TradeHour2, TradeMinute2, TradeCloseHour2, TradeCloseMinute2);
+    if(UseTradeTime3) tradeSchedule[2] = CreateTradeTime(TradeHour3, TradeMinute3, TradeCloseHour3, TradeCloseMinute3);
+    if(UseTradeTime4) tradeSchedule[3] = CreateTradeTime(TradeHour4, TradeMinute4, TradeCloseHour4, TradeCloseMinute4);
+    if(UseTradeTime5) tradeSchedule[4] = CreateTradeTime(TradeHour5, TradeMinute5, TradeCloseHour5, TradeCloseMinute5);
+    if(UseTradeTime6) tradeSchedule[5] = CreateTradeTime(TradeHour6, TradeMinute6, TradeCloseHour6, TradeCloseMinute6);
+}
+//+------------------------------------------------------------------+
+//| SetTradeManagement                                               |
+//+------------------------------------------------------------------+
+SetTradeManagement();
+void SetTradeManagement()
+{
+    // Set the trade management options for each trade time
+    for (int i = 0; i < TRADE_TIMES; i++)
+    {
+        if (TradeTime[i].UseTradeTime)
+        {
+            if (TradeTime[i].TradeLots > 0)
+            {
+                // Set fixed lot size
+                TradeTime[i].TradeType = TRADE_FIXED_LOT;
+            }
+            else if (TradeTime[i].TradePercentAccount > 0)
+            {
+                // Set percent of account balance
+                TradeTime[i].TradeType = TRADE_PERCENT_ACCOUNT;
+            }
+            else if (TradeTime[i].TradePercentAmount > 0)
+            {
+                // Set percent of fixed amount
+                TradeTime[i].TradeType = TRADE_PERCENT_AMOUNT;
+            }
+
+            if (TradeTime[i].TradeTakeProfit > 0)
+            {
+                // Set take profit level
+                TradeTime[i].TakeProfit = TradeTime[i].TradeTakeProfit;
+            }
+
+            if (TradeTime[i].TradeStopLoss > 0)
+            {
+                // Set stop loss level
+                TradeTime[i].StopLoss = TradeTime[i].TradeStopLoss;
+            }
+        }
+    }
+}
+
+
+//+------------------------------------------------------------------+
+//| SetIndicatorProperties                                       |
+//+------------------------------------------------------------------+
+/* NOT USED
+SetIndicatorProperties();
+*/
+//+------------------------------------------------------------------+
+//| Set Up Expert Magic Number                                       |
+//+------------------------------------------------------------------+
+
+   ExpertMagicNumber = MAGIC_NUMBER;
+
+//+----------------Set Up Expert Magic Number------------------------+
+
+
+//+------------------------------------------------------------------+
+//| ResetTradingStatistics / Preceding OnInit                         |
+//+------------------------------------------------------------------+
+ResetTradingStatistics();
+void ResetTradingStatistics()
+{
+    // Reset trading statistics
+    Trades = 0;
+    Wins = 0;
+    Losses = 0;
+    TotalProfit = 0.0;
+    TotalLoss = 0.0;
+    AverageProfit = 0.0;
+    AverageLoss = 0.0;
+    WinPercentage = 0.0;
+    LossPercentage = 0.0;
+    AverageTrade = 0.0;
+    MaxDrawdown = 0.0;
+    MaxDrawdownPercent = 0.0;
+    MaxConsecutiveWins = 0;
+    MaxConsecutiveLosses = 0;
+}
+
+
+
+//+------------------------------------------------------------------+
+//| PrintExpertParameters                                            |
+//| Description: Print the expert parameters to the log file         |
+//+------------------------------------------------------------------+
+PrintExpertParameters();
+void PrintExpertParameters()
+{
+    Print("======================== Expert Parameters ========================");
+    Print("Trading Schedule:");
+
+    for (int i = 0; i < ArraySize(tradeTimes); i++)
+    {
+        Print("Trade Time " + (i+1) + ": " + (tradeTimes[i].useTradeTime ? "Enabled" : "Disabled"));
+        Print("Trade Hour: " + tradeTimes[i].tradeHour);
+        Print("Trade Minute: " + tradeTimes[i].tradeMinute);
+        Print("Trade Close Hour: " + tradeTimes[i].tradeCloseHour);
+        Print("Trade Close Minute: " + tradeTimes[i].tradeCloseMinute);
+        Print("Trade Take Profit: " + DoubleToString(tradeTimes[i].tradeTakeProfit, 2));
+        Print("Trade Stop Loss: " + DoubleToString(tradeTimes[i].tradeStopLoss, 2));
+        Print("Trade Lots: " + DoubleToString(tradeTimes[i].tradeLots, 2));
+        Print("Trade Percent Account: " + DoubleToString(tradeTimes[i].tradePercentAccount, 2));
+        Print("Trade Percent Amount: " + DoubleToString(tradeTimes[i].tradePercentAmount, 2));
+        Print("");
+    }
+
+    Print("General Settings:");
+    Print("Use Take Profit: " + (useTakeProfit ? "True" : "False"));
+    Print("Use Stop Loss: " + (useStopLoss ? "True" : "False"));
+    Print("Use Fixed Lots: " + (useFixedLots ? "True" : "False"));
+    Print("Use Percent Account: " + (usePercentAccount ? "True" : "False"));
+    Print("Use Percent Amount: " + (usePercentAmount ? "True" : "False"));
+    Print("Use Trading Days: " + (useTradingDays ? "True" : "False"));
+
+    if (useTradingDays)
+    {
+        Print("Monday: " + (tradeDays[0] ? "Enabled" : "Disabled"));
+        Print("Tuesday: " + (tradeDays[1] ? "Enabled" : "Disabled"));
+        Print("Wednesday: " + (tradeDays[2] ? "Enabled" : "Disabled"));
+        Print("Thursday: " + (tradeDays[3] ? "Enabled" : "Disabled"));
+        Print("Friday: " + (tradeDays[4] ? "Enabled" : "Disabled"));
+        Print("Saturday: " + (tradeDays[5] ? "Enabled" : "Disabled"));
+        Print("Sunday: " + (tradeDays[6] ? "Enabled" : "Disabled"));
+    }
+
+    Print("Magic Number: " + IntegerToString(magicNumber));
+    Print("Expert Comment: " + expertComment);
+    Print("===================================================================");
+}
+
+
+
+
+
+   //--- initialize expert state
+   ExpertState = STATE_IDLE;
+   
+ //--- print expert state to log
+   PrintExpertState();
+
+
+void PrintExpertState()
+{
+    string expertStateStr = "";
+
+    switch (ExpertState)
+    {
+        case STATE_IDLE:
+            expertStateStr = "Idle";
+            break;
+        case STATE_TRADE:
+            expertStateStr = "Trading";
+            break;
+        case STATE_WAIT:
+            expertStateStr = "Waiting for next trade time";
+            break;
+        default:
+            expertStateStr = "Unknown";
+            break;
+    }
+
+    Print("Expert State: " + expertStateStr);
+}
+
+  
+   //--- initialize expert timers
+   ExpertTimer = 0;
+   TradeTimer = 0;
+
+   //--- initialize expert datetime variables
+   CurrentTime = 0;
+   LastTradeTime = 0;
+
+   //--- initialize expert bar counters
+   CurrentBar = 0;
+   LastTradeBar = 0;
+
+   //--- print expert initialization to log
+   Print("Expert initialization complete.");
+
+   return INIT_SUCCEEDED;
+}
+
+
+//+------------------------------------------------------------------+
+//| Expert deinitialization function                                 |
+//+------------------------------------------------------------------+
+void OnDeinit(const int reason)
+  {
+//--- destroy timer
+   EventKillTimer();
+   
+  }
+
+
+//+------------------------------------------------------------------+
+//| Expert tick function |
+//+------------------------------------------------------------------+
+void OnTick()
+{
+//--- update the current time and bar counters
+UpdateTimeAndBars();
+//--- get current bar time
+datetime currentBarTime = Time[0];
+//--- check if we need to update expert time variables
+if(currentBarTime != CurrentTime)
+{
+    CurrentTime = currentBarTime;
+
+    //--- update expert timer variables
+    ExpertTimer++;
+
+    //--- check if trading is allowed
+    if(IsTradingAllowed())
+    {
+        //--- update trade timer variables
+        TradeTimer++;
+
+        //--- check for new trades
+        CheckForNewTrades();
+
+        //--- manage open trades
+        ManageOpenTrades();
+
+        //--- update expert state
+        UpdateExpertState();
+
+        //--- print expert state to log
+        PrintExpertState();
+    }
+}
+
+
+//--- update the expert state
+UpdateExpertState();
+
+//--- check if the expert is idle
+if (ExpertState == STATE_IDLE)
+{
+//--- do nothing
+}
+//--- check if the expert is in a trade
+else if (ExpertState == STATE_TRADE)
+{
+//--- manage the open trade
+ManageOpenTrade();
+}
+//--- check if the expert is waiting to enter a trade
+else if (ExpertState == STATE_WAIT)
+{
+//--- check if it's time to enter a trade
+if (IsTradeTime())
+{
+//--- enter a new trade
+EnterNewTrade();
+}
+}
+
+//--- print expert state to log
+PrintExpertState();
+
+//--- print trading statistics to log
+PrintTradingStatistics();
+
+//--- print debug information to log
+PrintDebugInformation();
